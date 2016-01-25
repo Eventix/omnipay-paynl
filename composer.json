@@ -1,5 +1,5 @@
 {
-    "name": "andypieters/omnipay-paynl",
+    "name": "eventix/omnipay-paynl",
     "type": "library",
     "description": "Pay.nl driver for the Omnipay payment processing library",
     "keywords": [
@@ -14,8 +14,8 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Andy Pieters",
-            "email": "andy@pay.nl"
+            "name": "Chris de Jong",
+            "email": "chris@eventix.nl"
         }
     ],
     "autoload": {
