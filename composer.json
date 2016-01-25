@@ -1,5 +1,5 @@
 {
-    "name": "eventix/omnipay-paynl",
+    "name": "Eventix/omnipay-paynl",
     "type": "library",
     "description": "Pay.nl driver for the Omnipay payment processing library",
     "keywords": [
@@ -8,7 +8,9 @@
         "paynl",
         "omnipay",
         "pay",
-        "payment"
+        "pay.nl",
+        "payment",
+        "eventix"
     ],
     "homepage": "https://www.pay.nl",
     "license": "MIT",
