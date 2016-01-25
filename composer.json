@@ -1,5 +1,5 @@
 {
-    "name": "Eventix/omnipay-paynl",
+    "name": "eventix/omnipay-paynl",
     "type": "library",
     "description": "Pay.nl driver for the Omnipay payment processing library",
     "keywords": [
