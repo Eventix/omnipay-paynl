@@ -69,16 +69,8 @@ class FetchTransactionResponse extends AbstractResponse implements RedirectRespo
      */
     public function isPaid()
     {
-        return isset($this->data['paymentDetails']['stateName']) && 'PAID' === $this->data['paymentDetails']['stateName'];
+        return isset($this->data['paymentDetails']['stateName']) && in_array($this->data['paymentDetails']['stateName'], ['PAID', 'AUTHORIZE']);
     }
-
-    /**
-     * @return boolean
-     */
-//    public function isPaidOut()
-//    {
-//        return isset($this->data['status']) && 'paidout' === $this->data['status'];
-//    }
 
     /**
      * @return boolean
@@ -93,8 +85,8 @@ class FetchTransactionResponse extends AbstractResponse implements RedirectRespo
      */
     public function getTransactionReference()
     {
-        if (isset($this->data['id'])) {
-            return $this->data['id'];
+        if (isset($this->data['transaction']['transactionId'])) {
+            return $this->data['transaction']['transactionId'];
         }
     }
 
@@ -114,7 +106,21 @@ class FetchTransactionResponse extends AbstractResponse implements RedirectRespo
     public function getAmount()
     {
         if (isset($this->data['paymentDetails']['paidAmount'])) {
-            return $this->data['paymentDetails']['paidAmount'];
+            return $this->data['paymentDetails']['paidAmount'] / 100;
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPending()
+    {
+        if (isset($this->data['paymentDetails']['stateName'])) {
+            $state = $this->data['paymentDetails']['stateName'];
+
+            return $state === 'PENDING' || $state === 'VERIFY';
+        } else {
+            return false;
         }
     }
 }
