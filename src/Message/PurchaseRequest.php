@@ -110,7 +110,7 @@ class PurchaseRequest extends AbstractRequest {
 
                 $data['statsData'] = array_filter($statsData, function($k) use ($allowableParams) {
                     return in_array($k, $allowableParams);
-                }, ARRAY_FILTER_USE_KEY)
+                }, ARRAY_FILTER_USE_KEY);
             }
         }
 
@@ -126,5 +126,15 @@ class PurchaseRequest extends AbstractRequest {
     public function sendData($data) {
         $httpResponse = $this->sendRequest('POST', 'transaction/start', $data);
         return $this->response = new PurchaseResponse($this, $httpResponse->json());
+    }
+
+    public function getStatsData()
+    {
+        return $this->getParameter('statsData');
+    }
+
+    public function setStatsData($value)
+    {
+        return $this->setParameter('statsData', $value);
     }
 }
