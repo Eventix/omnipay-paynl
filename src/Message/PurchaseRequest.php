@@ -76,6 +76,8 @@ class PurchaseRequest extends AbstractRequest {
 
         if ($items = $this->getItems()) {
             $data['saleData'] = array(
+                'invoiceDate' => $this->getInvoiceDate(), //dd-mm-yyyy
+                'deliveryDate' => $this->getDeliveryDate(), //dd-mm-yyyy
                 'orderData' => array_map(function($item) {
                     $data = array(
                         'description' => $item->getDescription(),
@@ -136,5 +138,25 @@ class PurchaseRequest extends AbstractRequest {
     public function setStatsData($value)
     {
         return $this->setParameter('statsData', $value);
+    }
+
+    public function getInvoiceDate()
+    {
+        return $this->getParameter('invoiceDate');
+    }
+
+    public function setInvoiceDate($value)
+    {
+        return $this->setParameter('invoiceDate', $value);
+    }
+
+    public function getDeliveryDate()
+    {
+        return $this->getParameter('deliveryDate');
+    }
+
+    public function setDeliveryDate($value)
+    {
+        return $this->setParameter('deliveryDate', $value);
     }
 }
