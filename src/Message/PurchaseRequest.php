@@ -54,7 +54,7 @@ class PurchaseRequest extends AbstractRequest {
                 'emailAddress' => $card->getEmail(),
                 'language' => $card->getBillingCountry(),
                 'address' => array(
-                    'streetName' => $addressParts[1],
+                    'streetName' => isset($addressParts[1]) ? $addressParts[1] : null,
                     'streetNumber' => isset($addressParts[2]) ? $addressParts[2] : null,
                     'streetNumberExtension' => isset($addressParts[3]) ? $addressParts[3] : null,
                     'zipCode' => $card->getPostcode(),
@@ -64,7 +64,7 @@ class PurchaseRequest extends AbstractRequest {
                 'invoiceAddress' => array(
                     'initials' => $card->getBillingFirstName(),
                     'lastName' => $card->getBillingLastName(),
-                    'streetName' => $addressParts[1],
+                    'streetName' => isset($addressParts[1]) ? $addressParts[1] : null,
                     'streetNumber' => isset($addressParts[2]) ? $addressParts[2] : null,
                     'streetNumberExtension' => isset($addressParts[3]) ? $addressParts[3] : null,
                     'zipCode' => $card->getBillingPostcode(),
