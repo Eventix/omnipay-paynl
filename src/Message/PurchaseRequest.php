@@ -70,7 +70,8 @@ class PurchaseRequest extends AbstractRequest {
                     'zipCode' => $card->getBillingPostcode(),
                     'city' => $card->getBillingCity(),
                     'countryCode' => $card->getBillingCountry()
-                )
+                ),
+                'customerReference' => $this->getCustomerReference()
             );
         }
 
@@ -158,5 +159,15 @@ class PurchaseRequest extends AbstractRequest {
     public function setDeliveryDate($value)
     {
         return $this->setParameter('deliveryDate', $value);
+    }
+    
+    public function getCustomerReference()
+    {
+        return $this->getParameter('customerReference');
+    }
+
+    public function setCustomerReference($value)
+    {
+        return $this->setParameter('customerReference', $value);
     }
 }
