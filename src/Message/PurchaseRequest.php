@@ -2,6 +2,8 @@
 
 namespace Omnipay\Paynl\Message;
 
+use Omnipay\Common\Item;
+
 /**
  * Paynl Purchase Request
  *
@@ -28,9 +30,6 @@ class PurchaseRequest extends AbstractRequest {
         $data['ipAddress'] = $this->getClientIp();
         if ($this->getPaymentMethod()) {
             $data['paymentOptionId'] = $this->getPaymentMethod();
-        }
-        if ($this->getPaymentMethod()) {
-            $data['paymentOptionId'] = $this->getPaymentMethod();
             if ($this->getPaymentMethod() == 10 && $this->getIssuer()) {
                 $data['paymentOptionSubId'] = $this->getIssuer();
             }
@@ -40,10 +39,13 @@ class PurchaseRequest extends AbstractRequest {
             $data['transaction']['orderExchangeUrl'] = $this->getNotifyUrl();
         }
 
+        if($this->getCurrency()){
+            $data['transaction']['currency'] = $this->getCurrency();
+        }
+
         if ($card = $this->getCard()) {
-            $addressParts = [];
-            preg_match($this->addressRegex, $card->getBillingAddress1(), $addressParts);
-            $addressParts = array_filter($addressParts, 'trim');
+            $billingAddressParts = $this->getAddressParts($card->getBillingAddress1());
+            $shippingAddressParts = ($card->getShippingAddress1() ? $this->getAddressParts($card->getShippingAddress1()) : $billingAddressParts);
 
             $data['enduser'] = array(
                 'initials' => $card->getFirstName(), //Pay has no support for firstName, but some methods require full name. Conversion to initials is handled by Pay.nl based on the payment method.
@@ -54,22 +56,24 @@ class PurchaseRequest extends AbstractRequest {
                 'emailAddress' => $card->getEmail(),
                 'language' => $card->getBillingCountry(),
                 'address' => array(
-                    'streetName' => isset($addressParts[1]) ? $addressParts[1] : null,
-                    'streetNumber' => isset($addressParts[2]) ? $addressParts[2] : null,
-                    'streetNumberExtension' => isset($addressParts[3]) ? $addressParts[3] : null,
-                    'zipCode' => $card->getPostcode(),
-                    'city' => $card->getCity(),
-                    'countryCode' => $card->getCountry(),
+                'streetName' => isset($shippingAddressParts[1]) ? $shippingAddressParts[1] : null,
+                'streetNumber' => isset($shippingAddressParts[2]) ? $shippingAddressParts[2] : null,
+                'streetNumberExtension' => isset($shippingAddressParts[3]) ? $shippingAddressParts[3] : null,
+                'zipCode' => $card->getShippingPostcode(),
+                'city' => $card->getShippingCity(),
+                'countryCode' => $card->getShippingCountry(),
+                'regionCode' => $card->getShippingState()
                 ),
                 'invoiceAddress' => array(
                     'initials' => $card->getBillingFirstName(),
                     'lastName' => $card->getBillingLastName(),
-                    'streetName' => isset($addressParts[1]) ? $addressParts[1] : null,
-                    'streetNumber' => isset($addressParts[2]) ? $addressParts[2] : null,
-                    'streetNumberExtension' => isset($addressParts[3]) ? $addressParts[3] : null,
+                    'streetName' => isset($billingAddressParts[1]) ? $billingAddressParts[1] : null,
+                    'streetNumber' => isset($billingAddressParts[2]) ? $billingAddressParts[2] : null,
+                    'streetNumberExtension' => isset($billingAddressParts[3]) ? $billingAddressParts[3] : null,
                     'zipCode' => $card->getBillingPostcode(),
                     'city' => $card->getBillingCity(),
-                    'countryCode' => $card->getBillingCountry()
+                    'countryCode' => $card->getBillingCountry(),
+                    'regionCode' => $card->getBillingState()
                 ),
                 'customerReference' => $this->getCustomerReference()
             );
@@ -80,6 +84,7 @@ class PurchaseRequest extends AbstractRequest {
                 'invoiceDate' => $this->getInvoiceDate(), //dd-mm-yyyy
                 'deliveryDate' => $this->getDeliveryDate(), //dd-mm-yyyy
                 'orderData' => array_map(function($item) {
+                    /** @var Item $item */
                     $data = array(
                         'description' => $item->getDescription(),
                         'price' => ($item->getPrice() * 100), //convert the price from a double into a string
@@ -169,5 +174,16 @@ class PurchaseRequest extends AbstractRequest {
     public function setCustomerReference($value)
     {
         return $this->setParameter('customerReference', $value);
+    }
+
+    /**
+     * Get the parts of an address
+     * @param string $address
+     * @return array
+     */
+    public function getAddressParts($address) {
+        $addressParts = [];
+        preg_match($this->addressRegex, $address, $addressParts);
+        return array_filter($addressParts, 'trim');
     }
 }
