@@ -164,7 +164,7 @@ class Gateway extends AbstractGateway
 
     /**
      * @param array $options
-     * @return \Omnipay\Common\Message\AbstractRequest|CompletePurchaseRequest
+     * @return \Omnipay\Common\Message\AbstractRequest|InstoreRequest
      */
     public function instore(array $options = array())
     {
