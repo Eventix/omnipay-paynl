@@ -32,7 +32,7 @@ class FetchTransactionRequest extends AbstractPaynlRequest
      */
     public function sendData($data)
     {
-        $responseData = $this->sendRequest('info', $data);
+        $responseData = $this->sendRequest('transaction/info', $data);
         return $this->response = new FetchTransactionResponse($this, $responseData);
     }
 }

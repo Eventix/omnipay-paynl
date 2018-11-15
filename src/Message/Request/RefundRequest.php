@@ -37,7 +37,7 @@ class RefundRequest extends AbstractPaynlRequest
      */
     public function sendData($data)
     {
-        $responseData = $this->sendRequest('refund', $data);
+        $responseData = $this->sendRequest('transaction/refund', $data);
         return $this->response = new RefundResponse($this, $responseData);
     }
 }

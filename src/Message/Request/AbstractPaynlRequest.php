@@ -14,7 +14,7 @@ abstract class AbstractPaynlRequest extends AbstractRequest
     /**
      * @var string
      */
-    private $baseUrl = 'https://rest-api.pay.nl/v12/transaction/';
+    private $baseUrl = 'https://rest-api.pay.nl/v12/';
 
     /**
      * @param string $endpoint
@@ -99,5 +99,21 @@ abstract class AbstractPaynlRequest extends AbstractRequest
     public function getServiceId()
     {
         return $this->getParameter('serviceId');
+    }
+
+    /**
+     * @return string
+     */
+    public function getTerminalId()
+    {
+        return $this->getParameter('terminalId');
+    }
+
+    /**
+     * @param string $value
+     */
+    public function setTerminalId($value)
+    {
+        $this->setParameter('terminalId', $value);
     }
 }

@@ -1,0 +1,36 @@
+HTTP/1.1 200 OK
+Date: Tue, 09 Oct 2018 19:10:41 GMT;
+Server: Apache;
+Expires: Mon, 26 Jul 1990 05:00:00 GMT;
+Last-Modified: Tue, 09 Oct 2018 19:10:41 GMT;
+Cache-Control: post-check=0, pre-check=0;
+Pragma: no-cache;
+X-Frame-Options: SAMEORIGIN;
+X-XSS-Protection: 1; mode=block;
+X-Content-Type-Options: nosniff;
+Content-Length: 297;
+Connection: close;
+Content-Type: application/json;
+
+{
+   "request":{
+      "result":"TRUE",
+      "errorId":"",
+      "errorMessage":""
+   },
+   "transaction":{
+      "state":"init",
+      "transactionId":"TT-4929-5020-7500",
+      "terminalHash":"00865e53b403bba6695c902df46d695d56cf230870696e32e7dba65c",
+      "issuerUrl":"https:\/\/www.pay.nl\/pin\/00865e53b403bba6695c902df46d695d56cf230870696e32e7dba65c\/NL",
+      "statusUrl":"https:\/\/pin.pay.nl:9002\/status?hash=00865e53b403bba6695c902df46d695d56cf230870696e32e7dba65c&timeout=5"
+   },
+   "terminal":{
+      "state":"start"
+   },
+   "progress":{
+      "percentage":"0",
+      "seconds_past":"0",
+      "percentage_per_second":"2.222"
+   }
+}

@@ -115,7 +115,7 @@ class PurchaseRequest extends AbstractPaynlRequest
      */
     public function sendData($data)
     {
-        $responseData = $this->sendRequest('start', $data);
+        $responseData = $this->sendRequest('transaction/start', $data);
 
         return $this->response = new PurchaseResponse($this, $responseData);
     }

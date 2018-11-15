@@ -73,7 +73,7 @@ class CaptureRequest extends AbstractPaynlRequest
      */
     public function sendData($data)
     {
-        $responseData = $this->sendRequest('capture', $data);
+        $responseData = $this->sendRequest('transaction/capture', $data);
         return $this->response = new CaptureResponse($this, $responseData);
     }
 }

@@ -8,6 +8,7 @@ use Omnipay\Paynl\Message\Request\CompletePurchaseRequest;
 use Omnipay\Paynl\Message\Request\FetchIssuersRequest;
 use Omnipay\Paynl\Message\Request\FetchPaymentMethodsRequest;
 use Omnipay\Paynl\Message\Request\FetchTransactionRequest;
+use Omnipay\Paynl\Message\Request\InstoreRequest;
 use Omnipay\Paynl\Message\Request\PurchaseRequest;
 use Omnipay\Paynl\Message\Request\RefundRequest;
 use Omnipay\Paynl\Message\Request\VoidRequest;
@@ -159,5 +160,14 @@ class Gateway extends AbstractGateway
     public function completePurchase(array $options = array())
     {
         return $this->createRequest(CompletePurchaseRequest::class, $options);
+    }
+
+    /**
+     * @param array $options
+     * @return \Omnipay\Common\Message\AbstractRequest|CompletePurchaseRequest
+     */
+    public function instore(array $options = array())
+    {
+        return $this->createRequest(InstoreRequest::class, $options);
     }
 }

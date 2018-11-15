@@ -22,7 +22,7 @@ class FetchPaymentMethodsRequest extends AbstractPaynlRequest
 
     public function sendData($data)
     {
-        $responseData = $this->sendRequest('getServicePaymentOptions', $data);
+        $responseData = $this->sendRequest('transaction/getServicePaymentOptions', $data);
 
         return $this->response = new FetchPaymentMethodsResponse($this, $responseData);
     }

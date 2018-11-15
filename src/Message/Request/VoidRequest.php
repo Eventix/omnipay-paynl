@@ -33,7 +33,7 @@ class VoidRequest extends AbstractPaynlRequest
      */
     public function sendData($data)
     {
-        $responseData = $this->sendRequest('voidAuthorization', $data);
+        $responseData = $this->sendRequest('transaction/voidAuthorization', $data);
         return $this->response = new VoidResponse($this, $responseData);
     }
 }

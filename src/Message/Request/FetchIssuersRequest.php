@@ -19,7 +19,7 @@ class FetchIssuersRequest extends AbstractPaynlRequest
 
     public function sendData($data)
     {
-        $responseData = $this->sendRequest('getBanks');
+        $responseData = $this->sendRequest('transaction/getBanks');
 
         return $this->response = new FetchIssuersResponse($this, $responseData);
     }

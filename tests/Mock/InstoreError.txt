@@ -1,0 +1,24 @@
+HTTP/1.1 200 OK
+Date: Tue, 09 Oct 2018 19:10:41 GMT;
+Server: Apache;
+Expires: Mon, 26 Jul 1990 05:00:00 GMT;
+Last-Modified: Tue, 09 Oct 2018 19:10:41 GMT;
+Cache-Control: post-check=0, pre-check=0;
+Pragma: no-cache;
+X-Frame-Options: SAMEORIGIN;
+X-XSS-Protection: 1; mode=block;
+X-Content-Type-Options: nosniff;
+Content-Length: 297;
+Connection: close;
+Content-Type: application/json;
+
+{
+  "request": {
+    "result": "0",
+    "errorId": "PAY-9001",
+    "errorMessage": "Transaction not found"
+  },
+  "transaction": "",
+  "terminal": "",
+  "progress": ""
+}
