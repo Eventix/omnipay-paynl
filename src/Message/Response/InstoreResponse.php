@@ -49,10 +49,21 @@ class InstoreResponse extends AbstractPaynlResponse
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getTransactionReference()
     {
         return isset($this->data['transaction']['transactionId']) ? $this->data['transaction']['transactionId'] : null;
+    }
+
+    /**
+     * Terminal hash
+     *
+     * @see https://admin.pay.nl/docpanel/api/Instore/status/2 API_Terminal_v1::status();
+     * @return null|string Unique key for the transaction, that can be used to for the get the status of the transaction.
+     */
+    public function getTerminalHash()
+    {
+        return isset($this->data['transaction']['terminalHash']) ? $this->data['transaction']['terminalHash'] : null;
     }
 }

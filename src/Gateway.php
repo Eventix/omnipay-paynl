@@ -170,4 +170,14 @@ class Gateway extends AbstractGateway
     {
         return $this->createRequest(InstoreRequest::class, $options);
     }
+
+    /**
+     * Supports Instore
+     *
+     * @return boolean True if this gateway supports the supportsInstore() method
+     */
+    public function supportsInstore()
+    {
+        return method_exists($this, 'instore');
+    }
 }

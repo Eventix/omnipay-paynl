@@ -10,7 +10,7 @@ use Omnipay\Tests\TestCase;
 class InstoreRequestTest extends TestCase
 {
     /**
-     * @var RefundRequest
+     * @var InstoreRequest
      */
     protected $request;
 
@@ -21,15 +21,27 @@ class InstoreRequestTest extends TestCase
         $transactionId = uniqid();
         $terminalId = uniqid();
 
+        $this->request->setAmount(1);
+        $this->request->setClientIp('10.0.0.5');
+        $this->request->setReturnUrl('https://www.pay.nl');
         $this->request->setTransactionReference($transactionId);
         $this->request->setTerminalId($terminalId);
 
         $response = $this->request->send();
-
         $this->assertInstanceOf(InstoreResponse::class, $response);
+
         $this->assertFalse($response->isSuccessful());
         $this->assertTrue($response->isRedirect());
+
+        $this->assertInternalType('string', $response->getTransactionReference());
+        $this->assertInternalType('string', $response->getRedirectUrl());
+        $this->assertInternalType('string', $response->getTerminalHash());
+
         $this->assertNotEmpty($response->getRedirectUrl());
+        $this->assertNotEmpty($response->getTerminalHash());
+
+        $this->assertEquals('GET', $response->getRedirectMethod());
+        $this->assertNull($response->getRedirectData());
     }
 
     public function testSendError()

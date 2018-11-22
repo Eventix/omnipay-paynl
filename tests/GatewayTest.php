@@ -2,6 +2,7 @@
 
 namespace Omnipay\Paynl\Test;
 
+use Omnipay\Common\Message\RequestInterface;
 use Omnipay\Paynl\Gateway;
 use Omnipay\Paynl\Message\Request\FetchIssuersRequest;
 use Omnipay\Paynl\Message\Request\FetchPaymentMethodsRequest;
@@ -21,6 +22,35 @@ class GatewayTest extends GatewayTestCase
         parent::setUp();
 
         $this->gateway = new Gateway();
+    }
+
+    public function testSupportsInstore()
+    {
+        $supportsInstore = $this->gateway->supportsInstore();
+        $this->assertInternalType('boolean', $supportsInstore);
+
+        if ($supportsInstore) {
+            $this->assertInstanceOf(RequestInterface::class, $this->gateway->instore());
+        } else {
+            $this->assertFalse(method_exists($this->gateway, 'instore'));
+        }
+    }
+
+    public function testInstoreParameters()
+    {
+        if ($this->gateway->supportsInstore()) {
+            foreach ($this->gateway->getDefaultParameters() as $key => $default) {
+                // set property on gateway
+                $getter = 'get'.ucfirst($this->camelCase($key));
+                $setter = 'set'.ucfirst($this->camelCase($key));
+                $value = uniqid();
+                $this->gateway->$setter($value);
+
+                // request should have matching property, with correct value
+                $request = $this->gateway->instore();
+                $this->assertSame($value, $request->$getter());
+            }
+        }
     }
 
     public function testFetchIssuers()

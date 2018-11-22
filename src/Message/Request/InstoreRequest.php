@@ -7,7 +7,7 @@ namespace Omnipay\Paynl\Message\Request;
 use Omnipay\Paynl\Message\Response\InstoreResponse;
 
 /**
- * Class RefundRequest
+ * Class InstoreRequest
  * @package Omnipay\Paynl\Message\Request
  *
  * @method InstoreResponse send()
