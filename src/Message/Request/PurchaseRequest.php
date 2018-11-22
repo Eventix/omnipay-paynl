@@ -2,8 +2,9 @@
 
 namespace Omnipay\Paynl\Message\Request;
 
-
 use Omnipay\Common\Item;
+use Omnipay\Paynl\Common\StatsData;
+use Omnipay\Paynl\Common\StatsDataInterface;
 use Omnipay\Paynl\Message\Response\PurchaseResponse;
 
 /**
@@ -57,6 +58,7 @@ class PurchaseRequest extends AbstractPaynlRequest
                 'phoneNumber' => $card->getPhone(),
                 'emailAddress' => $card->getEmail(),
                 'language' => substr($card->getCountry(), 0, 2),
+                'customerReference' => $this->getCustomerReference(),
                 'address' => array(
                     'streetName' => isset($shippingAddressParts[1]) ? $shippingAddressParts[1] : null,
                     'streetNumber' => isset($shippingAddressParts[2]) ? $shippingAddressParts[2] : null,
@@ -79,9 +81,9 @@ class PurchaseRequest extends AbstractPaynlRequest
                 )
             ];
         }
+
         if ($items = $this->getItems()) {
-            $data['saleData'] = [
-                'orderData' => array_map(function ($item) {
+            $data['saleData']['orderData'] = array_map(function ($item) {
                     /** @var Item $item */
                     $data = [
                         'description' => $item->getName() ?: $item->getDescription(),
@@ -101,10 +103,27 @@ class PurchaseRequest extends AbstractPaynlRequest
                         $data['vatPercentage'] = $item->getVatPercentage();
                     }
                     return $data;
-                }, $items->all()),
-            ];
+                }, $items->all());
+        }
+        if ($invoiceDate = $this->getInvoiceDate()) {
+            $data['saleData']['invoiceDate'] = $invoiceDate; //dd-mm-yyyy
+        }
+        if ($deliveryDate = $this->getDeliveryDate()) {
+            $data['saleData']['deliveryDate'] = $deliveryDate; //dd-mm-yyyy
         }
 
+        if ($statsData = $this->getStatsData()) {
+            $data['statsData'] = [
+                "promotorId" => $statsData->getPromotorId(),
+                "info" => $statsData->getInfo(),
+                "tool" => $statsData->getTool(),
+                "extra1" => $statsData->getExtra1(),
+                "extra2" => $statsData->getExtra2(),
+                "extra3" => $statsData->getExtra3(),
+                "transferData" => $statsData->getTransferData(),
+                "domainId" => $statsData->getDomainId(),
+            ];
+        }
 
         return $data;
     }
@@ -121,6 +140,27 @@ class PurchaseRequest extends AbstractPaynlRequest
     }
 
     /**
+     * Get the identifier for a customer
+     *
+     * @return string
+     */
+    public function getCustomerReference()
+    {
+        return $this->getParameter('customerReference');
+    }
+
+    /**
+     * Set the customer reference
+     *
+     * @param string $value
+     * @return \Omnipay\Paynl\Message\Request\PurchaseRequest
+     */
+    public function setCustomerReference(string $value)
+    {
+        return $this->setParameter('customerReference', $value);
+    }
+
+    /**
      * Get the parts of an address
      * @param string $address
      * @return array
@@ -130,5 +170,80 @@ class PurchaseRequest extends AbstractPaynlRequest
         $addressParts = [];
         preg_match($this->addressRegex, trim($address), $addressParts);
         return array_filter($addressParts, 'trim');
+    }
+
+    /**
+     * Get the invoice date
+     *
+     * Pay accepts dd-mm-yyyy
+     *
+     * @return string
+     */
+    public function getInvoiceDate()
+    {
+        return $this->getParameter('invoiceDate');
+    }
+
+    /**
+     * Set the invoice date
+     *
+     * Pay accepts dd-mm-yyyy
+     *
+     * @param string $value
+     * @return \Omnipay\Paynl\Message\Request\PurchaseRequest
+     */
+    public function setInvoiceDate(string $value)
+    {
+        return $this->setParameter('invoiceDate', $value);
+    }
+
+    /**
+     * Get the delivery date
+     *
+     * Pay accepts dd-mm-yyyy
+     *
+     * @return string
+     */
+    public function getDeliveryDate()
+    {
+        return $this->getParameter('deliveryDate');
+    }
+
+    /**
+     * Set the delivery date
+     *
+     * Pay accepts dd-mm-yyyy
+     *
+     * @param string $value
+     * @return \Omnipay\Paynl\Message\Request\PurchaseRequest
+     */
+    public function setDeliveryDate(string $value)
+    {
+        return $this->setParameter('deliveryDate', $value);
+    }
+
+    /**
+     * Get the stats data
+     *
+     * @return \Omnipay\Paynl\Common\StatsDataInterface|null A bag containing the stats data
+     */
+    public function getStatsData()
+    {
+        return $this->getParameter('statsData');
+    }
+
+    /**
+     * Set the stats data in this order
+     *
+     * @param \Omnipay\Paynl\Common\StatsDataInterface|array $statsData An array of stats data in this order
+     * @return \Omnipay\Paynl\Message\Request\PurchaseRequest
+     */
+    public function setStatsData($statsData)
+    {
+        if ($statsData && !$statsData instanceof StatsDataInterface) {
+            $statsData = new StatsData($statsData);
+        }
+
+        return $this->setParameter('statsData', $statsData);
     }
 }

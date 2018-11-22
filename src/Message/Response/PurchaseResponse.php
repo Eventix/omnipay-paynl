@@ -2,7 +2,6 @@
 
 namespace Omnipay\Paynl\Message\Response;
 
-
 class PurchaseResponse extends AbstractPaynlResponse
 {
     /**
@@ -49,7 +48,7 @@ class PurchaseResponse extends AbstractPaynlResponse
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getTransactionReference()
     {
@@ -63,5 +62,4 @@ class PurchaseResponse extends AbstractPaynlResponse
     {
         return isset($this->data['transaction']['paymentReference']) ? $this->data['transaction']['paymentReference'] : null;
     }
-
 }

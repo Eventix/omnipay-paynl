@@ -39,7 +39,6 @@ class PurchaseRequestTest extends TestCase
 
     public function testCardEnduser()
     {
-
         $this->request->setAmount(1);
         $this->request->setClientIp('10.0.0.5');
         $this->request->setReturnUrl('https://www.pay.nl');
@@ -48,9 +47,13 @@ class PurchaseRequestTest extends TestCase
         $objCard = new CreditCard($card);
         $this->request->setCard($objCard);
 
+        $customerReference = uniqid();
+        $this->request->setCustomerReference($customerReference);
+
         $data = $this->request->getData();
 
         $this->assertNotEmpty($data['enduser']);
+        $this->assertNotEmpty($data['enduser']['customerReference']);
         $enduser = $data['enduser'];
 
         $this->assertEquals($objCard->getFirstName(), $enduser['initials']);
@@ -58,6 +61,7 @@ class PurchaseRequestTest extends TestCase
         $this->assertEquals($objCard->getBirthday('Y-m-d'), $enduser['dob']);
         $this->assertEquals($objCard->getPhone(), $enduser['phoneNumber']);
         $this->assertEquals($objCard->getEmail(), $enduser['emailAddress']);
+        $this->assertEquals($customerReference, $enduser['customerReference']);
     }
 
     public function testCardAddress()
@@ -126,13 +130,34 @@ class PurchaseRequestTest extends TestCase
 
     }
 
-    public function testPaynlItem()
+    public function testPaynlSaleData()
     {
         $this->request->setAmount(1);
         $this->request->setClientIp('10.0.0.5');
         $this->request->setReturnUrl('https://www.pay.nl');
         $this->request->setNotifyUrl('https://www.pay.nl/exchange');
 
+        $invoiceDate = date("Y-m-d");
+        $deliveryDate = date("Y-m-d");
+
+        $this->request->setInvoiceDate($invoiceDate);
+        $this->request->setDeliveryDate($deliveryDate);
+
+        $data = $this->request->getData();
+
+        $this->assertNotEmpty($data['saleData']);
+        $saleData = $data['saleData'];
+
+        $this->assertEquals($invoiceDate, $saleData['invoiceDate']);
+        $this->assertEquals($deliveryDate, $saleData['deliveryDate']);
+    }
+
+    public function testPaynlItem()
+    {
+        $this->request->setAmount(1);
+        $this->request->setClientIp('10.0.0.5');
+        $this->request->setReturnUrl('https://www.pay.nl');
+        $this->request->setNotifyUrl('https://www.pay.nl/exchange');
 
         $name = uniqid();
         $price = rand(1, 1000) / 100;
@@ -191,7 +216,106 @@ class PurchaseRequestTest extends TestCase
         $this->assertEquals($objItem->getName(), $item['description']);
         $this->assertEquals(round($objItem->getPrice() * 100), $item['price']);
         $this->assertEquals($objItem->getQuantity(), $item['quantity']);
+    }
 
+    public function testStatsDataObject()
+    {
+        $this->request->setAmount(1);
+        $this->request->setClientIp('10.0.0.5');
+        $this->request->setReturnUrl('https://www.pay.nl');
+        $this->request->setNotifyUrl('https://www.pay.nl/exchange');
+
+        $promotorId = rand(1,100);
+        $info = uniqid();
+        $tool = uniqid();
+        $extra1 = uniqid();
+        $extra2 = uniqid();
+        $extra3 = uniqid();
+        $transferData = [
+            'transferData1' => uniqid(),
+            'transferData2' => rand(1,100),
+            'transferData3' => true,
+            'transferData4' => (-1) * 12.34,
+        ];
+        $domainId = uniqid();
+
+        $objStatsData = new \Omnipay\Paynl\Common\StatsData([
+            'promotorId' => $promotorId,
+            'info' => $info,
+            'tool' => $tool,
+            'extra1' => $extra1,
+            'extra2' => $extra2,
+            'extra3' => $extra3,
+            'transferData' => $transferData,
+            'domainId' => $domainId,
+        ]);
+
+        $this->request->setStatsData($objStatsData);
+
+        $data = $this->request->getData();
+
+        $this->assertNotEmpty($data['statsData']);
+        $statsData = $data['statsData'];
+
+        $this->assertArraySubset($objStatsData->getParameters(), $statsData);
+
+        $this->assertEquals($objStatsData->getPromotorId(), $statsData['promotorId']);
+        $this->assertEquals($objStatsData->getInfo(), $statsData['info']);
+        $this->assertEquals($objStatsData->getTool(), $statsData['tool']);
+        $this->assertEquals($objStatsData->getExtra1(), $statsData['extra1']);
+        $this->assertEquals($objStatsData->getExtra2(), $statsData['extra2']);
+        $this->assertEquals($objStatsData->getExtra3(), $statsData['extra3']);
+        $this->assertArraySubset($objStatsData->getTransferData(), $statsData['transferData'], true);
+        $this->assertEquals($objStatsData->getDomainId(), $statsData['domainId']);
+    }
+
+    public function testStatsDataArray()
+    {
+        $this->request->setAmount(1);
+        $this->request->setClientIp('10.0.0.5');
+        $this->request->setReturnUrl('https://www.pay.nl');
+        $this->request->setNotifyUrl('https://www.pay.nl/exchange');
+
+        $promotorId = rand(1,100);
+        $info = uniqid();
+        $tool = uniqid();
+        $extra1 = uniqid();
+        $extra2 = uniqid();
+        $extra3 = uniqid();
+        $transferData = [
+            'transferData1' => uniqid(),
+            'transferData2' => rand(1,100),
+            'transferData3' => true,
+            'transferData4' => (-1) * 12.34,
+        ];
+        $domainId = uniqid();
+
+        $arrStatsData = [
+            'promotorId' => $promotorId,
+            'info' => $info,
+            'tool' => $tool,
+            'extra1' => $extra1,
+            'extra2' => $extra2,
+            'extra3' => $extra3,
+            'transferData' => $transferData,
+            'domainId' => $domainId,
+        ];
+
+        $this->request->setStatsData($arrStatsData);
+
+        $data = $this->request->getData();
+
+        $this->assertNotEmpty($data['statsData']);
+        $statsData = $data['statsData'];
+
+        $this->assertEquals($arrStatsData['promotorId'], $statsData['promotorId']);
+        $this->assertEquals($arrStatsData['info'], $statsData['info']);
+        $this->assertEquals($arrStatsData['tool'], $statsData['tool']);
+        $this->assertEquals($arrStatsData['extra1'], $statsData['extra1']);
+        $this->assertEquals($arrStatsData['extra2'], $statsData['extra2']);
+        $this->assertEquals($arrStatsData['extra3'], $statsData['extra3']);
+        $this->assertArraySubset($arrStatsData['transferData'], $statsData['transferData'], true);
+        $this->assertEquals($arrStatsData['domainId'], $statsData['domainId']);
     }
 
     protected function setUp()
